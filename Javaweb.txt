@@ -1,0 +1,699 @@
+============2023/12/20  Java基础部分  万丈高楼平地起，辉煌只能靠自己 ==================
+
+------------------第三章变量-----------------------------
+
+1) 关于浮点数在机器中存放形式的简单说明,浮点数=符号位+指数位+尾数位
+2) 尾数部分可能丢失，造成精度损失(小数都是近似值)。
+   //Java 的浮点型常量(具体值)默认为 double 型，声明 float 型常量，须后加‘f’或‘F' //float num1 = 1.1; //对不对?错误
+   float num2 = 1.1F; //对的
+   //浮点数使用陷阱: 2.7 和 8.1 / 3 比较
+   //看看一段代码
+   double num11 = 2.7;
+   double num12 = 8.1 / 3; //2.7,但是计算机不知道你后边还有没有小数
+   System.out.println(num11);//2.7
+   System.out.println(num12);//接近 2.7 的一个小数，而不是 2.7
+   //得到一个重要的使用点: 当我们对运算结果是小数的进行相等判断是，要小心//应该是以两个数的差值的绝对值，在某个精度范围类判断
+   if( num11 == num12) {
+   System.out.println("num11 == num12 相等");
+   }
+   //正确的写法 
+   if(Math.abs(num11 - num12) < 0.000001 ) {
+   System.out.println("差值非常小，到我的规定精度，认为相等...");
+
+API 应用程序编程接口 Application Programming Interface
+如何使用api:先点索引，然后输入要查的类，选择第一个；
+
+-------------------------char---------------------------------
+字符类型可以表示单个字符,字符类型是 char，char 是两个字节(可以存放汉字)，
+char c1 = 'a'; //输出a,字符常量用单引号括起来的单个字符
+char c2 = '\t';//制表位    
+char c3 = '韩';//输出   韩
+char c4 = 97;//说明；字符类型可以存放一个数字，在输出的时候会输出97代表的那个字符。
+char c5 = 'a';//输出a,System.out.println(int c5);
+char c5 = 'a'; //当想要输出'a' 对应的 数字时候System.out.println((int)c5);
+
+//char 类型是可以进行运算的，相当于一个整数，因为它都对应有 Unicode 码. System.out.println('a' + 10);//107，他会先把a转换成97，因为本质就是数
+
+char c6 = 'b' + 1;//98+1
+System.out.println('b' + 1);//99
+System.out.println(c6); //99->对应的字符->编码表 ASCII(规定好的)=>c    
+System.out.println((int)c6); //99
+
+字符类型存储的本质；
+字符类型存储到计算机中需要将字符对应的码值找出来，例如'a'
+存储；a对应的码值是97 ，然后转成二进制(1100001)，然后在存储
+读取；二进制(1100001)，然后97，然后到a， 显示
+
+-------------------基本数据类型转换--------------------------
+      char --int --long--float---double
+byte--short--int --long--float---double
+//细节 1： 有多种类型的数据混合运算时，系统首先自动将所有数据转换成容量最大的那种数据类型，然后再进行计算
+int n1 = 10; //ok
+//float d1 = n1 + 1.1;//错误 n1 + 1.1 => 结果类型是 double
+//double d1 = n1 + 1.1;//对 n1 + 1.1 => 结果类型是 double
+float d1 = n1 + 1.1F;//对 n1 + 1.1 => 结果类型是 float
+//细节 3: (byte, short) 和 char 之间不会相互自动转换
+//当把具体数赋给 byte 时，(1)先判断该数是否在 byte 范围内，如果是就可以
+byte b1 = 10; //对 , -128-127
+// int n2 = 1; //n2 是 int
+// byte b2 = n2; //错误，原因： 如果是变量赋值，判断类型
+// char c1 = b1; //错误， 原因 byte 不能自动转成 char
+//细节 4: byte，short，char 他们三者可以计算，无论是相互之间还是只有一种类型之间，在计算时首先转换为 int 类型
+byte b2 = 1;
+byte b3 = 2;
+short s1 = 1;
+//short s2 = b2 + s1;//错, b2 + s1 => int
+int s2 = b2 + s1;//对, b2 + s1 => int
+//byte b4 = b2 + b3; //错误: b2 + b3 => int
+
+--------------------强制类型转换--------------------------
+//int x = (int)10*3.5+6*1.5;//编译错误： double -> int
+int x = (int)(10*3.5+6*1.5);// (int)44.0 -> 44
+
+char c1 = 100; //ok
+int m = 100; //ok
+//char c2 = m; //错误
+char c3 = (char)m; //ok
+System.out.println(c3);//100 对应的字符, d 字符
+
+---------------------基本数据类型和String类型转换------------------
+//基本数据类型->String
+int n1 = 100;
+float f1 = 1.1F;
+double d1 = 4.5;
+boolean b1 = true;
+String s1 = n1 + "";
+String s2 = f1 + "";
+String s3 = d1 + "";
+String s4 = b1 + "";
+System.out.println(s1 + " " + s2 + " " + s3 + " " + s4);
+
+//String->对应的基本数据类型
+String s5 = "123";
+//解读 使用 基本数据类型对应的包装类，的相应方法，得到基本数据类型
+int num1 = Integer.parseInt(s5);  //123
+double num2 = Double.parseDouble(s5);//123.0
+float num3 = Float.parseFloat(s5);//123.0
+long num4 = Long.parseLong(s5);//123
+byte num5 = Byte.parseByte(s5);//123
+boolean b = Boolean.parseBoolean("true");//true
+short num6 = Short.parseShort(s5);//123
+
+//怎么把字符串转成字符 char -> 含义是指 把字符串的第一个字符得到
+//解读 s5.charAt(0) 得到 s5 字符串的第一个字符 '1' System.out.println(s5.charAt(0));
+
+=========================第四章 运算符=============================
+// % 取模 ,取余
+// 在 % 的本质 看一个公式!!!! a % b = a - a / b * b
+//当a为小数时a % b = a - (int)a / b * b     要先把a 强转
+// -10 % 3 => -10 - (-10) / 3 * 3 = -10 + 9 = -1
+// 10 % -3 = 10 - 10 / (-3) * (-3) = 10 - 9 = 1
+// -10 % -3 = (-10) - (-10) / (-3) * (-3) = -10 + 9 = -1
+
+临时变量使用
+// int i = 1;//i->1
+// i = i++; //规则使用临时变量: (1) temp=i;(2) i=i+1;(3)i=temp;
+// System.out.println(i); // 1
+// int i=1;
+// i=++i; //规则使用临时变量: (1) i=i+1;(2) temp=i;(3)i=temp;
+// System.out.println(i); //2
+//
+
+1) 短路与 && ， 短路或 ||，取反 !
+2) 逻辑与 &，逻辑或 |，^ 逻辑异或
+   //对于&&短路与而言，如果第一个条件为 false ,后面的条件不再判断
+   //对于&逻辑与而言，如果第一个条件为 false ,后面的条件仍然会判断
+   //(1)||短路或：如果第一个条件为 true，则第二个条件不会判断，最终结果为 true
+   //(2)| 逻辑或：不管第一个条件是否为 true，第二个条件都要判断，效率低
+
+//! 操作是取反 T->F , F -> T
+System.out.println(60 > 20); //T
+System.out.println(!(60 > 20)); //F
+//a^b: 叫逻辑异或，当 a 和 b 不同时，则结果为 true, 否则为 false
+boolean b = (10 > 1) ^ ( 3 > 5);
+System.out.println("b=" + b);//T
+
+三元运算
+//案例：实现三个数的最大值
+int n1 = 553;
+int n2 = 33;
+int n3 = 123;
+//思路
+//1. 先得到 n1 和 n2 中最大数 , 保存到 max1
+//2. 然后再 求出 max1 和 n3 中的最大数，保存到 max2
+int max1 = n1 > n2 ? n1 : n2;
+int max2 = max1 > n3 ? max1 : n3;
+System.out.println("最大数=" + max2);
+//使用一条语句实现, 推荐使用上面方法
+//老师提示: 后面我们可以使用更好方法,比如排序
+// int max = (n1 > n2 ? n1 : n2) > n3 ?
+// (n1 > n2 ? n1 : n2) : n3;
+// System.out.println("最大数=" + max);
+
+-----------------------键盘输入语句----------------------------
+步骤
+1.要使用Scanner类，首先要导入她所在的包，java.util.*
+2.创建该类对象(声明变量)
+3.调用里面功能
+
+//要求：可以从控制台接收用户信息，【姓名，年龄，薪水】
+import java.util.Scanner;//表示把 java.util 下的 Scanner 类导入
+public class Input {
+//编写一个 main 方法
+public static void main(String[] args) {
+//演示接受用户的输入
+//步骤
+//Scanner 类 表示 简单文本扫描器，在 java.util 包
+//1. 引入/导入 Scanner 类所在的包
+//2. 创建 Scanner 对象 , new 创建一个对象,体会
+// myScanner 就是 Scanner 类的对象
+Scanner myScanner = new Scanner(System.in);//System.in 表示从键盘输入
+//3. 接收用户输入了， 使用 相关的方法
+System.out.println("请输入名字");
+//当程序执行到 next 方法时，会等待用户输入~~~
+ String name = myScanner.next(); //接收用户输入字符串
+System.out.println("请输入年龄");
+int age = myScanner.nextInt(); //接收用户输入 int
+System.out.println("请输入薪水");
+double sal = myScanner.nextDouble(); //接收用户输入 double
+ System.out.println("输入性别");
+        char gender =new Scanner(System.in).next().charAt(0);
+System.out.println("人的信息如下:");
+System.out.println("名字=" + name
+
++ " 年龄=" + age + " 薪水=" + sal+gender);
+  }
+  }
+
+===================2022/09/14=====================================
+--------------------进制-----------------------------------
+对于整数，有四种表示方式：
+二进制：0,1 ，满 2 进 1.以 0b 或 0B 开头。
+十进制：0-9 ，满 10 进 1。
+八进制：0-7 ，满 8 进 1. 以数字 0 开头表示。
+十六进制：0-9 及 A(10)-F(15)，满 16 进 1. 以 0x 或 0X 开头表示。此处的 A-F 不区分大小写。
+4.21 二进制转换成八进制
+规则：从低位开始,将二进制数每三位一组，转成对应的八进制数即可。
+案例：请将 ob11010101 转成八进制
+ob11(3)010(2)101(5) => 0325
+4.22 二进制转换成十六进制
+规则：从低位开始，将二进制数每四位一组，转成对应的十六进制数即可。
+案例：请将 ob11010101 转成十六进制
+ob1101(D)0101(5) = 0xD5
+
+4.23 八进制转换成二进制
+规则：将八进制数每 1 位，转成对应的一个 3 位的二进制数即可。
+案例：请将 0237 转成二进制
+02(010)3(011)7(111) = 0b10011111
+
+4.24 十六进制转换成二进制
+规则：将十六进制数每 1 位，转成对应的 4 位的一个二进制数即可。
+案例：请将 0x23B 转成二进制
+0x2(0010)3(0011)B(1011) = 0b001000111011
+课堂练习：请将
+01230 转成 二进制
+0xAB29 转成二进制
+
+~2=? // 按位取反
+2&3=?// 2 按位与 3
+2|3=? ~-5=?
+13&7=?
+5|4=?
+-3^3=?//^ 按位异或
+
+----------------原码，反码，补码---------------------------------
+1.二进制的最高位是符号位，0表示整数1表示负数
+2.正数的原码反码补码都一样，三码合一；
+3.负数的反码=他的原码符号位不变其他位取反(0变1    ,1变0)；
+4.负数的补码=她的反码+1，负数的反码=负数的补码-1
+5.0的反码，补码都是0
+6.Java中所有的数都是有符号的、
+7.计算机在运算的时候都是以补码的形式进行运算的<重要>
+8.当我们看到运算的结果时候，要看他的原码<重要>
+
+具体看笔记本 视频P98
+
+=========================== 2022/09/15 =================================
+
+======================  老韩说，学习Java有钱途！加油~  ====================
+
+1.switch 表达式中的返回值必须是int ,byte,short,char,enum,String
+2.case 表达式之后的 必须是常量，或者常量表达式
+
+//Scanner myScanner = new Scanner(System.in);
+System.out.println("输入月份");
+int month = myScanner.nextInt();
+switch(month) {
+case 3:
+case 4:
+case 5:
+System.out.println("这是春季");
+break;
+
+//2)
+for(;循环判断条件;) 中的初始化和变量迭代可以写到其它地方，但是两边的分号不能省略
+
+int i = 1;
+for(;i<=10;){
+System.out.println("星期2");
+i++;
+}  //这时i的作用域变大了
+
+for(;;){
+}//表示死循环
+
+-----------------------编程思想---------------------------------------
+//编写一个 main 方法
+public static void main(String[] args) {
+//打印 1~100 之间所有是 9 的倍数的整数，统计个数 及 总和.[化繁为简,先死后活]
+//老韩的两个编程思想(技巧)
+//1. 化繁为简 : 即将复杂的需求，拆解成简单的需求，逐步完成 编程 = 思想 --练习-> 代码//2. 先死后活 : 先考虑固定的值，然后转成可以灵活变化的值
+//
+//思路分析
+//打印 1~100 之间所有是 9 的倍数的整数，统计个数 及 总和
+//化繁为简
+//(1) 完成 输出 1-100 的值
+//(2) 在输出的过程中，进行过滤，只输出 9 的倍数 i % 9 ==0
+//(3) 统计个数 定义一个变量 int count = 0; 当 条件满足时 count++;
+//(4) 总和 , 定义一个变量 int sum = 0; 当条件满足时累积 sum += i;
+//先死后活
+//(1) 为了适应更好的需求，把范围的开始的值和结束的值，做出变量
+//(2) 还可以更进一步 9 倍数也做成变量 int t = 9;
+
+int count = 0; //统计 9 的倍数个数 变量
+int sum = 0; //总和
+int start = 10;
+int end = 200;
+int t = 5; // 倍数
+for(int i = start; i <= end; i++) {
+if( i % t == 0) {
+System.out.println("i=" + i);
+count++;
+sum += i;//累积
+}
+}
+System.out.println("count=" + count);
+System.out.println("sum=" + sum);
+}
+}
+
+-------------break     字符串比较      continue    return------------------------
+break 如果没使用标签默认退出最近的循环体，注意是循环体，不是if内的语句块
+
+ String name  = new Scanner(System.in).next();
+
+            if("丁真".equals(name))
+
+continue 用于结束本次循环继续执行下次循环
+
+return   表示跳出所在的方法，如果用在main方法中代表退出程序
+
+int n=153
+百位n/100，十位n%100/10 ,个位n%10;
+输出小写的a-z
+for(char c1= 'a' ; c1<='z';c1++){
+
+    System.out.println(c1+"");
+
+}
+
+==========================第六章数组===================================
+====================2022/09/16======================================
+//请求出一个数组 int[]的最大值 {4,-1,9, 10,23}，并得到对应的下标
+//老韩思路分析
+//1. 定义一个 int 数组 int[] arr = {4,-1,9, 10,23};
+//2. 假定 max = arr[0] 是最大值 , maxIndex=0;
+//3. 从下标 1 开始遍历 arr， 如果 max < 当前元素，说明 max 不是真正的
+// 最大值, 我们就 max=当前元素; maxIndex=当前元素下标
+//4. 当我们遍历这个数组 arr 后 , max 就是真正的最大值，maxIndex 最大值
+// 对应的下标
+int[] arr = {4,-1,9,10,23};
+int max = arr[0];//假定第一个元素就是最大值
+int maxIndex = 0; //
+for(int i = 1; i < arr.length; i++) {//从下标 1 开始遍历 arr
+if(max < arr[i]) {//如果 max < 当前元素
+max = arr[i]; //把 max 设置成 当前元素
+maxIndex = i;
+}
+}
+//当我们遍历这个数组 arr 后 , max 就是真正的最大值，maxIndex 最大值下标
+System.out.println("max=" + max + " maxIndex=" + maxIndex);
+
+///p178--179 重看二维数组
+
+=================2022/09/17=====第七章 类与对象=====================
+1.类: 我们把所有的猫的特性(属性，行为)提取出来形成*猫类，是数据类型，是程序员定义的数据类型。而int 是系统给的数据类型。我们可以通过猫类创建一个猫对象或者类似int类型可以定义一个值是100，一样；类是对象的模板，对象是类的一个个体，对应的一个实例；
+2.对象是引用类型
+3.String[] master;//属性可以是基本数据类型，也可以是引用类型(对象，数组)
+
+4.//1. 一个方法最多有一个返回值 [思考，如何返回多个结果 返回数组 ]
+public int[] getSumAndSub(int n1, int n2) {
+int[] resArr = new int[2]; //
+resArr[0] = n1 + n2;
+resArr[1] = n1 - n2;
+return resArr;
+}
+5.方法定义时候的参数是形式参数；方法调用时候的参数，即传入的参数，是实际参数，实际参数和形式参数的类型要一致或者兼容，个数和顺序必须一致。
+6.方法里面不能再写方法，即方法不能嵌套定义。
+7.同一个类中的方法可以直接调用,不需要创建对象；
+    public void print(int n) {
+     System.out.println("print()方法被调用 n=" + n);
+    }
+         public void sayOk() { //sayOk 调用 print(直接调用即可)
+print(10);
+System.out.println("继续执行 sayOK()~~~");
+}
+   A 类调用 B 类中的方法：需要通过A类的方法a，在a方法new B,对象名调用
+
+public boolean isOdd(int num) {
+// if(num % 2 != 0) {
+// return true;
+// } else {
+// return false;
+// }
+//return num % 2 != 0 ? true; false;
+
+class Person {
+String name;
+int age;
+}
+class B {
+public void test200(Person p) {///传 对象，对象也是引用类型
+//p.age = 10000; //修改对象属性
+//思考
+p = new Person();
+p.name = "tom";
+p.age = 99;
+//思考
+//p = null;
+}
+
+p220-226
+
+全局变量可以不赋值，因为有默认值，而局部变量必须先赋值在使用，因为没有默认值，佛则显示你没有初始化
+属性也叫全局变量。属性和局部变量是可以重名的，访问时遵循就近原则。
+全局变量可以在本类使用，也可以被其他类通过调用进行使用，而局部变量只能在自己的方法中进行使用
+
+public static void main(String[] args) {
+
+Person p1 = new Person();
+T t1 = new T();
+t1.test(); //第 1 种跨类访问对象属性的方式
+t1.test2(p1);//第 2 种跨类访问对象属性的方式
+}
+}
+class T {
+
+//全局变量/属性：可以被本类使用，或其他类使用（通过对象调用)
+public void test() {
+Person p1 = new Person();
+System.out.println(p1.name);//jack
+}
+
+public void test2(Person p) {
+System.out.println(p.name);//jack
+}
+}
+
+class Person {
+//细节: 属性可以加修饰符(public protected private..)
+// 局部变量不能加修饰符
+public int age = 20;
+String name = "jack";
+}
+}
+
+构造器，是类的一种，主要作用是完成对新对象的初始化，他的特点是没有返回值，也不能用void，构造器是在创建完的对象进行的初始化。
+可以用Javap反编译
+
+java虚拟机会给每个对象分配this，代表当前对象，this.name代表当前对象的属性而不是那个构造器的局部变量，或者方法中的局部变量的name。当前对象就是你创建好之后，谁在调用这个构造器，这个this就是哪一个对象。
+简单的说那个对象调用，this就代表那个对象。例如dog1.info()；这时候this就代表狗1
+ this的关键字可以访问本类的属性，方法，构造器；this可以区分当前的属性和局部变量
+
+7.10.3 this 的注意事项和使用细节
+ThisDetail.java
+
+1) this 关键字可以用来访问本类的属性、方法、构造器
+2) this 用于区分当前类的属性和局部变量
+3) 访问成员方法的语法：this.方法名(参数列表);
+4) 访问构造器语法：this(参数列表); 注意只能在构造器中使用(即只能在构造器中访问另外一个构造器, 必须放在第一条语句)
+5) this 不能在类定义的外部使用，只能在类定义的方法中使用。
+
+p251.中Double是包装类，包装类是类的一种，而类是自定义的数据类型，所以可以当方法的返回类型，就像int类一样，
+ 对象是可以为空的 Person p = null; 引用数据类型可以为null；
+
+P253-260
+
+=========================2022/09/18包 ============================
+
+只有public和默认的访问修饰符可以修饰类，其他的两种不可以修饰类 
+
+========================继承==============================================
+8.8.6继承的深入讨论/细节问题
+
+1) 子类继承了所有的属性和方法，非私有的属性和方法可以在子类直接访问, 但是私有属性和方法不能在子类直接访问，要通过父类提供公共的方法去访问
+2) 子类必须调用父类的构造器， 完成父类的初始化
+3) 当创建子类对象时，不管使用子类的哪个构造器，默认情况下总会去调用父类的无参构造器，如果父类没有提供无参构造器，则必须在子类的构造器中用 super 去指定使用父类的哪个构造器完成对父类的初始化工作，否则，编译不会通过(怎么理解。) [举例说明]
+4) 如果希望指定去调用父类的某个构造器，则显式的调用一下 : super(参数列表)
+5) super 在使用时，必须放在构造器第一行(super 只能在构造器中使用)
+6) super() 和 this() 都只能放在构造器第一行，因此这两个方法不能共存在一个构造器
+7) java 所有类都是 Object 类的子类, Object 是所有类的基类. 8) 父类构造器的调用不限于直接父类！将一直往上追溯直到 Object 类(顶级父类)
+8) 子类最多只能继承一个父类(指直接继承)，即 java 中是单继承机制。
+   思考：如何让 A 类继承 B 类和 C 类？ 【A 继承 B， B 继承 C】
+9) 不能滥用继承，子类和父类之间必须满足 is-a 的逻辑关系
+
+代码复用问题
+    public void printInfo(){
+        System.out.println(info()+"    color:"+color);
+    }
+  public String  info(){
+        return super.info()+"    color:"+color;
+    }
+
+=======================2022/09/20=================================
+object类
+==是比较运算符，不是方法；既可以判断基本类型页可以判断引用类型是否相等；如果判断的是基本类型，则判断的是基本类型的值是否相等；如果判断的是引用类型沢判断的是地址是否相等即判断是不是同一个对象
+
+equals 是object的方法，只能判断引用类型
+===============================================================================
+
+======================2022/09/23断点调试================================
+F7跳入  
+F8跳过
+shift + F8  跳出 
+F9  执行到下一个断点
+
+=========================2022年12月15==================================
+
+1.接口中所有的属性都是public static final 类型，这三个词是被隐藏起来的
+证明属性是static  就用类名.属性看看是否能够访问
+证明是final    就在‘主方法上使用类名.属性来进行重新的赋值，会显示不能重新赋值，因为是final
+证明是public   在 属性前面用protected，private来进行修饰会显示错误，在实现接口的普通类上面属性前面要用public修饰，所以证明是public的
+2.接口中属性的访问形式是接口名.属性名
+3.接口不能继承类，但是可以继承多个接口  interface A extends B,C{}
+4.接口的修饰符只能是public 和 默认。这一点和类的修饰符是一样的。
+5.练习    
+     interface A {
+        int a = 23;
+      }
+    class B implements A{
+      }
+     在main中:
+          B b = new B();
+    System.out.println(b.a);//23
+    System.out.println(A.a);//23
+    System.out.println(B.a);//23
+
+6.实现接口和继承类  
+
+    实现接口机制是对Java单继承的机制一个补充。一旦被继承，子类就直接可以使用父类的方法。如果子类需要扩展功能可以通过实现接口的凡是扩展。
+
+ 继承的价值是；解决代码的幅度行和可维护性
+接口的加价值在于；设计，设计好哥哥规范，让其他的类去实现这些方法。
+接口比继承更加灵活，继承是满足 is- a的关系，接口是满足 like-a 的关系。想什么什么一样拥有什么什么功能。
+接口，。
+ 接口在一定程度上实现代码解耦；即:接口规范+动态绑定  讲集合和原码的时候讲
+7.接口的多态特性
+   在Usb接口实现案例，UsbInterface既可以接收手机对象又可以接收相机对象
+无论是接口还是继承，当你new之后的东西赋值给了接口类型或者父类的类型下的变量，这个变量是可以指向任意的继承或者接口的新建的new 的对象的   接口和继承父类 类型的变量可以指向实现了接口或者继承了父类的类的实例
+8.接口数组      动态绑定机制    instanceof判断运行类型  向下转型  p410
+9.接口的多态传递   A接口继承B接口，当类C实现了A接口的同时也实现了B接口，虽然实现代码上并没有显示实现B，但是因为A继承B，所以A就拥有了B的所有性质
+10.当A类继承了B类同时有实现了C 接口的时候如果想用在A类中使用B类的变量则使用super.变量名；想使用接口C的变量则使用接口C.变量
+
+=====================2022年12月16日   内部类  =================================
+1.内部类innerclass，外部类outerclass，外部其他类。类的五大成员包括属性方法构造器方法块和内部类。
+2.内部类最大的特点就是可以访问私有属性，并可以实现类与类之间的包含关系，后面迪岑源码有大量的内部类
+3.内部类分四种，在方法体内的有类名的叫局部内部类，没有类名的叫做匿名内部类，在方法之外的分成员内部类没有static和静态内部类有static
+4.局部类不能使用访问修饰符，但是可以前面加final修饰，如果使用final修饰之后就布恩那个被继承 ，局部类的作用域是在该方法或者带那块中，局部内部类可以直接访问外部类的成员，外部类在方法中可以创建局部类的对象实例，在调用局部类的属性和方法。外部其他类不能访问局部内部类，因为局部内部类相当于与一个局部变量，如果外部类和内部类重名的时候，就近原则，如果这是好像使用外部类的变量，则使用外部类名.this.变量名，因为不知静态变量所以此处使用了this，这里的外部类名.this本质就是外部类的一个对象。哪个对象调用了创建内部类所在的方法，这个就指向就是外部类名.this。
+5.什么是匿名内部类 Anonymous inner class？ 本质是类，是内部类，是匿名的，无名字(实际上是系统内部分配的名字，你是看不到的)，同时匿名内部类还是一个对象，一般只是用一次 
+6.pritn("运行类型"+ 对象名.getclass())   # # 这里的 getclass()就是获取对象的运行类型
+
+====================2022年12月20日======================================
+
+1.deprecated修饰摸个元素，或者类表示这个东西已经过时，但是可以使用，可以修饰，方法字段包,类，参数等
+2.什么时候使用，可以做版本升级过度使用
+3.SuppressWarning 作用范围和你放置的作用域有关，通常可以放在具体的方法或者类之前
+4.jdk的元注解
+ =====================2022年12月30日线程==================================
+程序；program 是为了完成特定任务用某种语言编写的指令的集合，简单的说就是我们写的代码
+进程；就是我们运行的程序；比如我们使用QQ就是启动了一个进程操作系统会为该进程分配内存空间。
+进程；是程序执行的过程，或者时正在运行的一个程序。是动态的过程：有 他自身的生产，存在和消亡    的过程。其实就是代码写好了，你运行起来run就是一个进程，进程就会使用你的空间。
+线程；线程是由进程创建的，是进程的一个实体，一个进程可以拥有多个线程，像已经打开的迅雷可以     同时下载多个任务，每个任务是一个线程。
+单线程；在同一时刻，只允许执行一个程序，类似人的大脑。
+多线程：在同一时刻可以执行多个线程，比如一个QQ进程可以通化市打开多个聊天窗口，一个迅雷    可以同时下载多个文件
+并发： 同一时刻，多个任务交替执行，造成一种貌似同时的错觉，简单的说就是单核cpu实现的多任务就是并发。
+并行：同一时刻多个任务同时执行。多核cpu可以实现并行。
+
+创建线程的两中方式：1继承Thread类2实现Runnable接口
+
+=================2023年5月11日  函数式接口 ======================================================
+Java基础篇--函数式接口
+
+一、函数式接口概述：
+1.函数式接口：有且仅有一个抽象方法的接口，java中的函数式编程体现就是Lambda表达式，
+所以函数式接口就是可以适用于Lambda使用的接口，只有确保接口有且仅有一个抽象方法，java中的Lambda才能顺利的进行推导
+
+二、如何检测一个接口是不是函数式接口呢？
+1.@FunctionalInterface
+
+2.放在接口定义的上方：如果接口是函数式接口，编译通过；如果不是，编译失败
+
+@FunctionalInterface
+public interfaceSum {
+    void show();
+}
+三、注意：
+1.我们自己定义函数式接口时候，@FunctionalInterface是可选的，就算我不写这个注解，只要保证满足函数式接口定义条件， 也照样是函数式接口。但是，建议加上该注解
+
+四、函数式接口作为方法的参数： 
+1.如果方法的参数提供是一个函数式接口，我们可以使用Lambda表达式做为参数传递
+
+startThread(() -> System.out.println(Thread.currentThread().getName()+"线程启动"))
+ 五、函数式接口作为方法的返回值：
+1.如果返回值是一个函数式接口，我们可以使用Lambda表示作为结果返回
+
+private static Comparator<String> getComparator(){
+        return (s1,s2) -> s1.length()-s1.length();
+    }
+ 六、常用的函数式接口：
+1.Supplier接口
+
+2.Consumer接口
+
+3.Predicate接口
+
+4.Function接口
+
+七 、Supplier接口：
+1.Supplier<T>:包含一个无参的方法
+
+2.T get()：获得结果
+
+3.该方法不需要参数，它会按照某种实现逻辑(由Lambda表达式实现)返回一个数据
+
+4.Supplier<T>接口也被称为生产型接口，如果我们指定了接口的泛型是什么类型，那么接口中的get方法就会生产什么类型的数据供我们使用
+
+ private static String getString(Supplier<String> s){
+        return s.get();
+    }
+    private static Integer getInteger(Supplier<Integer> i){
+        return i.get();
+    }
+ 八、Consumer接口：
+1.Consumer<T>:包含两个方法
+
+2.void accept(T t):对给定的参数执行操作
+
+3.default Consumer<T> andThen(Consumer after):返回一个组合的Consumer，依次执行操作，然后执行after操作
+
+4.Consumer<T>接口也被称为消费型接口，它消费的数据类型由泛型指定
+
+ public static void main(String[] args) {
+        operatorString("亚瑟",(String s) -> System.out.println(s));
+        operatorString("貂蝉",s -> System.out.println(s));
+        operatorString("安其拉",System.out::println);
+        operatorString("安其拉",(String s) -> {
+            System.out.println(new StringBuilder(s).reverse().toString());
+        });
+        operatorString("貂蝉",s -> System.out.println(new StringBuilder(s).reverse().toString()));
+        operatorString("成吉思汗",s -> System.out.println(s),s1 -> System.out.println(new StringBuilder(s1).reverse().toString()));
+    }
+    //定义一个方法，用不同的方式消费同一个字符串数据两次
+    private static void operatorString(String name,Consumer<String> con,Consumer<String> con1){
+//        con.accept(name);
+//        con1.accept(name);
+        con.andThen(con1).accept(name);
+    }
+    //定义一个方法，消费一个字符串数据
+    private static void operatorString(String name, Consumer<String> con){
+        con.accept(name);
+    }
+ 九、Predicate接口：
+1.Predicate<T>:常用的四个方法
+
+2.boolean test(T t):对给定的参数进行判断(判断逻辑由Lambda表达式实现)，返回一个布尔值
+
+3.default Predicate<T> negate():返回一个逻辑的否定，对应逻辑非
+
+4.default Predicate<T> and(Predicate other):返回一个组合判断，对应短路与
+
+5.default Predicate<T> ot(Predicate other):返回一个组合判断，对应短路或
+
+6.Predicate<T>接口通常用于判断参数是否满足指定的条件
+
+public static void main(String[] args) {
+        boolean b = checkString("hll",s -> s.length() > 8);
+        System.out.println(b);
+        boolean b1 = checkString("HelloWorld",s -> s.length() > 8);
+        System.out.println(b1);
+
+        boolean b2 = checkString("hell",s -> s.length() > 8,s -> s.length() < 15);
+        System.out.println(b2);
+        boolean b3 = checkString("HelloWorld",s -> s.length() > 8,s -> s.length() < 15);
+        System.out.println(b3);
+    }
+    private static boolean checkString(String s,Predicate<String> pre,Predicate<String> pre1){
+        return pre.or(pre1).test(s);//相当于||
+    }
+    private static boolean checkString(String s,Predicate<String> pre){
+        return pre.negate().test(s);
+    }
+
+ 十、Function接口：
+1.Function<T,R>:两个常用方法，T表示输入数据类型，R表示输出数据类型
+
+2.R apply<T t>:将此函数应用与给定的参数
+
+3.default<V> Function andThen(Function after):返回一个组合函数，首先将该函数应用与输入，然后将after函数应用于结果
+
+4.Function<T,R>接口通常用于对参数进行处理，转换(处理逻辑由Lambda表达式实现)，然后返回一个新的值
+
+public static void main(String[] args) {
+        convert("100",s -> Integer.parseInt(s));
+        convert(100,i -> String.valueOf(i + 566));//键int类型转换为字符串
+        convert("100",s -> Integer.parseInt(s),i -> String.valueOf(i + 566));
+    }
+    private static void convert(String s,Function<String,Integer> fun){
+        int i = fun.apply(s);
+        System.out.println(i);
+    }
+    private static void convert(int i,Function<Integer,String> fun){
+        String s = fun.apply(i);
+        System.out.println(s);
+    }
+    private static void convert(String s,Function<String,Integer> fun,Function<Integer,String> fun1){
+        String ss = fun.andThen(fun1).apply(s);
+        System.out.println(ss);
+    }
+
+===============================2023年5月19日==========================================
+接口的注意事项
+1.接口不能被实例化
+2.接口中的所有方法都是public方法，接口中的抽象方法，可以不用abstract修饰
+    void aaa();  但是实际上是默认有public abstract修饰的  ，这个public可以省略不写
+3.接口中的属性，只能是final的，而且是public static final修饰的。例如  int  a=10；
+   实际上是public static final int  a=10；接口中属性的访问形式是  接口.属性名
+4.一个普通的类实现接口就是必须将该接口的所有方法都实现；抽象类实现接口可以不实现接口的方法
+
+5.接口是更加抽象的抽象类，抽象类中的方法可以有方法体，但是接口的方法不能有方法体
+    jdk8.0之后可以有静态的方法和默认的方法，也就是说接中可以有方法的具体实现。
