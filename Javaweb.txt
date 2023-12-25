@@ -837,4 +837,18 @@ public static void main(String[] args) {
 像这种在容器中建立对象与对象之间的绑定关系就要用到DI:
 
 2. ==DI（Dependency Injection）依赖注入==
+
+
+=======================================2023年12月25===================================================
+
+form 表单中onchange 事件  
+   <select onchange = "testChange2(this.value)">
+   <option value="1" > 北京</option>	
+    <option value="2" > 北京</option>	
+     <option value="3" > 北京</option>	
+     </select>
+     
+onsubmit  这个属性是放在from de
+
+
     
