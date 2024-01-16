@@ -894,6 +894,161 @@ SpringBoot3
 
 
 
+======================================2024年01月15日======================================================
+
+1.Springboot整合Mybatis
+
+1.1数据库相关的创建
+
+1.2首先在快速创建工程后，先在pom文件上导入相关的依赖；
+1.3properties或者yml文件进行数据库以及端口路径的设置
+1.4代码的编写
+	1.4.1先在src下面的本次创建的模块的包下面创建一个pojo包,然后在包中建一个简单的Java的类，这里边的成员变量要和数据库的对应字段保持一致
+	在Spring Boot项目中，POJO（Plain Old Java Object）是用于表示业务领域中的数据对象的简单Java类。
+	这些类通常只包含私有字段（成员变量），并提供了公共的getter和setter方法来访问和修改这些字段。
+	POJO的设计目的是保持简单、可读性强，没有复杂的业务逻辑，也不依赖于特定的框架。
+	实体类： 在持久层，POJO通常用于表示数据库中的表。这些类的字段通常对应于表中的列，而每个实例则对应于表中的一行记录。
+	DTO（数据传输对象）： POJO还常用于数据传输对象，用于在不同层之间传递数据。DTO通常包含与业务相关的数据，用于在业务层和表现层之间传递信息。
+	业务逻辑封装： POJO也可以用于封装业务逻辑，但要注意保持其简单性
+	请求和响应对象： 在Web开发中，POJO常常用于表示HTTP请求的参数和返回的结果。
+	创建实体类（POJO）：
+				public class User {
+			    private Long id;
+			    private String username;
+			    private String password;
+			    // 其他字段和方法
+			}
+	1.4.2然后在创建mapper包,然后在包下面写接口，这个接口中的方法就是用来操作数据库的抽象方法
+	在Java开发中，mapper包通常用于存放数据访问层（Data Access Layer）的代码，其中包含了用于数据库操作的映射器（mapper）接口或类。
+	这种命名约定通常与使用MyBatis或类似持久化框架的项目相关。
+			public interface UserMapper {
+			User getUserById(Long id);
+			List<User> getAllUsers();
+			void insertUser(User user);
+			void updateUser(User user);
+			void deleteUser(Long id);
+			}
+			
+	在这个例子中，UserMapper接口定义了一些基本的数据库操作，如根据ID获取用户、获取所有用户、插入用户、更新用户和删除用户。
+	
+	1.4.3然后创建service包,并在包下面创建一个接口，然后在该包下面创建一个impl的子包，子包中创建对应接口的实现类
+	
+	在Java开发中，service包通常用于存放业务逻辑的代码，即服务层。服务层负责处理业务规则、协调不同的数据访问操作，
+	使得控制器（Controller）和数据访问层（DAO）之间的耦合度降低，同时提供高层次的业务操作接口。
+
+	以下是一个简单的示例，演示如何创建service包，并在其中实现一些业务逻辑：
+
+	1.4.3.1创建业务逻辑接口（Service Interface）：
+
+	public interface UserService {
+	    User getUserById(Long id);
+	    List<User> getAllUsers();
+	    void createUser(User user);
+	    void updateUser(User user);
+	    void deleteUser(Long id);
+	}
+	
+	业务逻辑接口定义了一些基本的业务操作，如根据ID获取用户、获取所有用户、创建用户、更新用户和删除用户。
+
+	1.4.3.2创建业务逻辑实现类（Service Implementation）：
+
+
+	@Service
+	public class UserServiceImpl implements UserService {
+	    private final UserMapper userMapper;
+
+	    @Autowired
+	    public UserServiceImpl(UserMapper userMapper) {
+	        this.userMapper = userMapper;
+	    }
+
+	    @Override
+	    public User getUserById(Long id) {
+	        return userMapper.getUserById(id);
+	    }
+
+	    @Override
+	    public List<User> getAllUsers() {
+	        return userMapper.getAllUsers();
+	    }
+
+	    @Override
+	    public void createUser(User user) {
+	        // 可以在这里添加一些业务规则的校验
+	        userMapper.insertUser(user);
+	    }
+
+	    @Override
+	    public void updateUser(User user) {
+	        // 可以在这里添加一些业务规则的校验
+	        userMapper.updateUser(user);
+	    }
+
+	    @Override
+	    public void deleteUser(Long id) {
+	        // 可以在这里添加一些业务规则的校验
+	        userMapper.deleteUser(id);
+	    }
+	}
+	业务逻辑实现类实现了业务逻辑接口中定义的方法，并在需要的地方调用数据访问层（UserMapper）进行数据库操作。
+	在这个实现类中，还可以加入一些业务规则的校验、事务管理等逻辑。
+
+	1.4.3.3使用服务层：
+
+	在控制器（Controller）或其他业务组件中，可以通过依赖注入方式使用服务层。
+
+
+	@RestController
+	@RequestMapping("/api/users")
+	public class UserController {
+	    private final UserService userService;
+
+	    @Autowired
+	    public UserController(UserService userService) {
+	        this.userService = userService;
+	    }
+
+	    @GetMapping("/{id}")
+	    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+	        User user = userService.getUserById(id);
+	        if (user != null) {
+	            return ResponseEntity.ok(user);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    }
+
+	    @GetMapping
+	    public ResponseEntity<List<User>> getAllUsers() {
+	        List<User> users = userService.getAllUsers();
+	        return ResponseEntity.ok(users);
+	    }
+
+	    @PostMapping
+	    public ResponseEntity<Void> createUser(@RequestBody User user) {
+	        userService.createUser(user);
+	        return ResponseEntity.status(HttpStatus.CREATED).build();
+	    }
+
+	    @PutMapping("/{id}")
+	    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody User user) {
+	        user.setId(id);
+	        userService.updateUser(user);
+	        return ResponseEntity.ok().build();
+	    }
+
+	    @DeleteMapping("/{id}")
+	    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+	        userService.deleteUser(id);
+	        return ResponseEntity.ok().build();
+	    }
+	}
+	这个例子中，service包下包含了UserService接口和UserServiceImpl实现类，用于处理与用户相关的业务逻辑。
+	控制器类 UserController 通过依赖注入方式使用了 UserService，从而实现了对用户信息的访问和操作。
+	这种分层的设计有助于代码的组织、可维护性和可测试性。
+
+
+
 
 
 
