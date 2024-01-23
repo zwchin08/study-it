@@ -1116,14 +1116,62 @@ SpringBoot3
    
    ======================================2024年01月21======================================================	
    
-     ======================================2024年01月22======================================================	
+   ======================================2024年01月22======================================================
+     
+     
+  ======================================2024年01月23======================================================	
 	
 	
 	
+
+     
+
+
+
+
+package com.itheima;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * ClassName: RedisTest
+ * Package: com.itheima
+ * Description:
+ *
+ * @Author 吉田学園　陈正伟
+ * @Create 2024-01-23 11:54
+ * @Version 1.0
+ */
+@SpringBootTest//如果在测试类上添加了这个注解，那么单元测试执行之前会启动springboot
+public class RedisTest {
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Test
+    public void testSet(){
+        //往redis中存储一对键值对
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set("username","zhangsan");
+        operations.set("id","1",15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testGet(){
+        //往redis中存储一对键值对
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        System.out.println(operations.get("username"));
+    }
+}
 	
 
    	
-
+  ======================================2024年01月24======================================================	
 
 
 
