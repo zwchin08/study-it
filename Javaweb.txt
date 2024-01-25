@@ -1172,6 +1172,49 @@ public class RedisTest {
 
    	
   ======================================2024年01月24======================================================	
+  
+  
+  前端部分
+  1.vue的使用步骤
+  	1.1引入vue模块，创建应用实例，定义元素div,并交给vue控制
+  	<!-- 引入vue模块 -->
+    <script type="module">
+            import {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+           // 创建vue的应用实例
+            createApp({
+                data(){
+                    return{
+                        message:"hello vue3"
+                    }
+                }
+            }).mount("#app");
+    </script>
+    1.2构建用户界面，准备数据，用插值表达式渲染
+    	data(){
+                    return{
+                        message:"hello vue3"
+                    }
+                }
+                
+                
+        <h1>{{message}}</h1>       
+        
+        
+	2.    <div id="app">
+        <!-- 注意这里边的 v-bind:的冒号后边不能打空格-->
+        <a v-bind:href="URL">黑马官网</a>
+    </div>
+    
+    
+    3.v-if和v-show的区别是前者是根据条件在创建，而后者是把所有的都创建了，决定显示哪一个，当需要
+    频繁的切换隐藏的场景的时候选择后者。
+    
+    4.vue 的生命周期分8个阶段，常用的是
+    		mounted() {
+                console.log("挂在完毕发送请求。。。。")
+            },
+            函数，他是再页面加载完发送异步请求，加载数据，渲染页面
+            
 
 
 
